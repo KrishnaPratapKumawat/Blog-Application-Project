@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Service
 public class CustomerUserDetailServiceImpl implements UserDetailsService {
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return new User("admin",passwordEncoder.encode("admin@321"), new ArrayList<>());

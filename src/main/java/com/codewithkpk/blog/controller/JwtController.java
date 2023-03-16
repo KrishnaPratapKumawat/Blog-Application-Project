@@ -28,9 +28,8 @@ public class JwtController {
     public ResponseEntity<JwtResponse> createToke(@RequestBody JwtModelRequest jwtModelRequest) throws Exception {
         try {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(jwtModelRequest.getUsername(),jwtModelRequest.getPassword()));
-        }catch (UsernameNotFoundException e){
-            e.printStackTrace();
-            throw new Exception("Invalid Token");
+        }catch (Exception e){
+            throw new Exception("Bad Credential"+e);
         }
         UserDetails userDetails = this.customerUserDetailService.loadUserByUsername(jwtModelRequest.getUsername());
         String token = jwtUtils.generateToken(userDetails);
