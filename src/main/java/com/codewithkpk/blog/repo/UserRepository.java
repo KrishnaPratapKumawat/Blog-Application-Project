@@ -6,6 +6,7 @@ import com.codewithkpk.blog.entity.User;
 import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
-    public User findByEmail(String Email);
+
+    public User findByEmail(String email);
 
 }

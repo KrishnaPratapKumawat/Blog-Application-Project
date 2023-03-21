@@ -30,7 +30,7 @@ public class PostsController {
     @Value("${project.image}")
     private String path;
    @PostMapping("/addPost/user/{userId}/category/{categoryId}")
-    public ResponseEntity<Boolean>createPost(@RequestBody PostsDto postsDto, @PathVariable Integer userId, @PathVariable Integer categoryId){
+    public ResponseEntity<Boolean>createPost(@RequestBody PostsDto postsDto, @PathVariable Integer userId, @PathVariable Integer categoryId) throws Exception {
         boolean savePost = this.emailAuthentication.sendEmail(userId,categoryId,postsDto);
         return new ResponseEntity<Boolean>(savePost,HttpStatus.CREATED);
     }

@@ -1,5 +1,6 @@
 package com.codewithkpk.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -18,5 +19,6 @@ public class Category {
     private String categoryTitle;
     private String categoryDescription;
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Posts>posts= new ArrayList<>();
 }

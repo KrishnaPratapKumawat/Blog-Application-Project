@@ -41,9 +41,6 @@ public class CategoryController {
        List<CategoryDto> categories =  this.categoryService.getCategories();
        return ResponseEntity.ok(categories);
     }
-    @DeleteMapping("/deletePost/{postId}")
-    public void deletePost(@PathVariable Integer postId){
 
-    }
 
 }

@@ -25,5 +25,7 @@ public class UserDataTransferOption {
     @Pattern(message = "Ex:-Jhon@123",regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$")
     private String password;
     private String about;
+    private boolean isEnabled;
+    private boolean isDeleted;
 
 }

@@ -27,6 +27,9 @@ public class User {
 	private String password;
 	@Column(name="user_about")
 	private String about;
+	private boolean isEnabled;
+	@Column(name = "User_Delete")
+	private boolean isDeleted;
 	@OneToMany(mappedBy = "user",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private List<Posts> posts= new ArrayList<>();
 }

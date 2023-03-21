@@ -9,14 +9,18 @@ import com.codewithkpk.blog.services.EmailAuthentication;
 import com.codewithkpk.blog.services.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import javax.mail.*;
+
+import javax.mail.Message;
+import javax.mail.Session;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
-import java.util.ResourceBundle;
+
 @Service
 public class EmailAuthenticationImpl implements EmailAuthentication {
    @Autowired
@@ -27,6 +31,8 @@ public class EmailAuthenticationImpl implements EmailAuthentication {
     private PostService postService;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
     public EmailAuthenticationImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -34,7 +40,7 @@ public class EmailAuthenticationImpl implements EmailAuthentication {
     }
 
     @Override
-    public boolean sendEmail(Integer userId, Integer categoryId,PostsDto postsDto) {
+    public boolean sendEmail(Integer userId, Integer categoryId,PostsDto postsDto) throws Exception {
         User user = this.userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
         PostsDto savePost = postService.createPost(postsDto,userId,categoryId);
         int postId = savePost.getPostId();
@@ -42,8 +48,6 @@ public class EmailAuthenticationImpl implements EmailAuthentication {
         Date dateFormat = savePost.getCurrentDate();
         String postTitle = savePost.getPostTitle();
         String date = simpleDateFormat.format(dateFormat);
-        String host = "smtp.gmail.com";
-        String name = user.getUserName();
         String countPost = String.valueOf(user.getPosts().size() + 1);
         String email = user.getEmail();
         String  message ="Hello User,\n"+ "<html><head>"
@@ -72,45 +76,19 @@ public class EmailAuthenticationImpl implements EmailAuthentication {
                 +"</table>"
                 +"</body></html>";
         String subject = "#"+postId+":"+"Post Details:";
-        String to = email;
-        String from = "krishnakumawat@shrinesoft.com";
-        Properties properties = System.getProperties();
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", 465);
-        properties.put("mail.smtp.ssl.enable", true);
-        properties.put("mail.smtp.auth", true);
-        final String[] userName = {" "};
-        final String[] passWord = {" "};
-        Session session = Session.getInstance(properties, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                 ResourceBundle resourceBundle;
-                resourceBundle = ResourceBundle.getBundle("Email");
-                userName[0] = resourceBundle.getString("username");
-                passWord[0] = resourceBundle.getString("password");
-                return new PasswordAuthentication(userName[0],passWord[0]);
-            }
-        });
-        session.setDebug(true);
-        MimeMessage mimeMessage = new MimeMessage(session);
-        try {
-            mimeMessage.setFrom(from);
-            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        Session session = Session.getInstance(new Properties());
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(user.getEmail()));
             mimeMessage.setSubject(subject);
             mimeMessage.setText(message);
             mimeMessage.setContent(message,"text/html");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            javaMailSender.send(mimeMessage);
 
-        try {
-            Transport.send(mimeMessage);
-            System.out.println("sent Successfully");
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(e);
+        }catch (Exception e){
+            throw new Exception("Failed Exception "+email);
         }
-        return false;
+        return true;
     }
 }
+

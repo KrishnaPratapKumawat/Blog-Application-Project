@@ -23,6 +23,8 @@ public class BlogSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/JwtToken/**").permitAll()
+                .antMatchers("/user/**").permitAll()
+                .antMatchers("/posts/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
