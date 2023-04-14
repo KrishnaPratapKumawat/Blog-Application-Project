@@ -1,0 +1,10 @@
+.idea
+.settings
+*.iml
+/target/
+/images/
+/src/main/resources/
+.classpath
+.factorypath
+.project
+
